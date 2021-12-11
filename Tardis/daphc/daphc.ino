@@ -142,27 +142,28 @@ void play(FatReader &dir) {
         Serial.println();                  // Hooray it IS a WAV proper!
         wave.play();                       // make some noise!
 
-        int k = 0;
-        int b = 1;
+        float value = 0;
+        bool fade_down = true;
+        float divisor = 1;
         while (wave.isplaying) {// playing occurs in interrupts, so we print dots in realtime
-         analogWrite(6, k);
-           
-          if (b == 0)
+         
+         analogWrite(6,  (value / divisor));
+
+          if (fade_down)
           {
-            k--;
-            if (k == -1)
+            if (--value == -1)
             {
-              b = 1;
-              k = 0;
+              fade_down = false;
+              value = 0;
+              divisor = divisor * 1.3;
             }
           }
           else
           {
-            k++;
-            if (k == 256)
+            if (++value == 256)
             {
-              b = 0;
-              k = 255;
+              fade_down = true;
+              value = 255;
             }
           }
 
